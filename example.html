@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<html lang = "en">
+   
+<head>
+	<title>Example usage of PyForumAPI</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0,  minimum-scale=1.0"> 
+	<meta charset='utf-8' />
+	<link rel="stylesheet" href="example.css" />
+	<script src="http://nile16.nu/forum/pyforum.js"></script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<div id="dimmer"></div> <!-- Semi transparent layer used to dim the page and direct attention to the pop-up forms -->
+		<div id="output"></div> <!-- Area for thread or post list -->
+		<div id="newPostBox">   <!-- Pop-up form for making a new post -->
+			<div class="cancelButton" onclick="closePopUps()">&#x2716</div>
+			<input  type="text" id="postAuthor"   placeholder="Ditt Namn eller Alias" ><br>
+			<textarea           id="postText"     placeholder="Brödtext" ></textarea>
+			<button onclick='addPost()'>Lägg Till Inlägg</button>
+		</div>
+		<div id="newThreadBox"> <!-- Pop-up form for making a new thread -->
+			<div class="cancelButton" onclick="closePopUps()">&#x2716</div>
+			<input  type="text" id="threadTitle"   placeholder="Namn på tråden" ><br>
+			<input  type="text" id="threadCreator" placeholder="Ditt Namn eller Alias" ><br>
+			<textarea           id="threadText"    placeholder="Brödtext" ></textarea><br>
+			<button onclick='addThread()'>Lägg Till Tråd</button>
+		</div>
+	</div>
+</body>
+
+<script>
+
+	// Micro jquery!!!
+	function $(ele){
+		return document.getElementById(ele);
+	}
+	
+	// Create a forum object
+	myForum = new PyForum('wu16');
+
+	// Writes a list of threads to the output div
+	function writeThreadList(threadlist){
+		// Clear the output div from text
+		$('output').innerHTML="";
+		// Loop through the thread list line by line and write links to threads in output div 
+		for (i=0;i<threadlist.length;i++) {
+			$('output').innerHTML+="<a href='#' onclick='myForum.getThread(\""+threadlist[i]['_id']+"\",writeThread)' >"+threadlist[i]['title']+"</a><br>";
+		}
+		// Add a button for creation of a new thread
+		$('output').innerHTML+="<button onclick='showNewThreadPopUp()'>Skapa Tråd</button><br>";
+	}
+	
+	// Writes a thread with posts to the output div
+	function writeThread(thread){
+		// Replace any text in the output div with a button used to return to the thread list view
+		$('output').innerHTML="<div class='cancelButton' onclick='myForum.getThreadList(writeThreadList)'>&#x2716</div>";
+		// Add thread title, text and author name to the output div
+		$('output').innerHTML+="<b>"+thread['title']+"</b><p>"+thread['text']+"</p><i>"+thread['creator']+"</i><br><hr>";
+		// Loop through the list of posts write the posts one by one to the output div
+		for (i=0;i<thread['posts'].length;i++) {
+			$('output').innerHTML+="<p>"+thread['posts'][i]['text']+"</p><i>"+thread['posts'][i]['author']+"</i><hr>";
+		}
+		// Add a button for creation of a new post
+		$('output').innerHTML+="<button onclick='showNewPostPopUp()'>Skriv Inlägg</button><br>";
+	}
+
+	function showNewPostPopUp(){
+		// "Dims" the whole page by making the dimmer div visible
+		$('dimmer').style.display='block';
+		// Removes any remaining text from last post
+		$('postText').value="";
+		// Make the post dialoge visible
+		$('newPostBox').style.display='block';
+	}
+
+	function showNewThreadPopUp(){
+		// "Dims" the whole page by making the dimmer div visible
+		$('dimmer').style.display='block';
+		// Removes any remaining title and text from last post
+		$('threadTitle').value="";
+		$('threadText').value="";
+		// Make the new thread dialoge visible
+		$('newThreadBox').style.display='block';
+	}
+
+	function addThread(){
+		// Order the creation of a new thread using PyForumAPI's addThread method
+		myForum.addThread($('threadTitle').value,$('threadCreator').value,$('threadText').value);
+		// close pop-up form
+		closePopUps();
+		// Order an updated list of threads to be sent to writeThreadList function (for output on screen) using PyForumAPI's getThreadList method 
+		myForum.getThreadList(writeThreadList);
+	}
+	
+	function addPost(){
+		// Order the creation of a new post using PyForum API
+		myForum.addPost($('postAuthor').value,$('postText').value);
+		// close pop-up form
+		closePopUps();
+		// Order an updated list of posts to be sent to writeThread function (for output on screen) using PyForumAPI's getThread method 
+		myForum.getThread('last',writeThread);
+	}
+
+	function closePopUps(){
+		// Hide the new thread dialoge
+		$('newThreadBox').style.display='none';
+		// Hide the new post dialoge
+		$('newPostBox').style.display='none';
+		// Hide the dimmer
+		$('dimmer').style.display='none';
+	}
+	
+	// When the page loads, order a list of threads to be sent to writeThreadList function (for output on screen) using PyForumAPI's getThreadList method
+	myForum.getThreadList(writeThreadList);
+
+	
+</script>
+</html>
