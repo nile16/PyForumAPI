@@ -1,3 +1,4 @@
+
 class PyForum {
 
 	constructor(forumId) {
@@ -27,14 +28,14 @@ class PyForum {
 	}
 	
 	
-	addThread(title,creator,text){
+	addThread(title,text){
 		var xhr = new XMLHttpRequest();
 		var url = 'http://nile16.nu:1201/';
 		var para  = {};
 		para['forumId'] = this.forumId;
+		para['idtoken'] = id_token;
 		para['task']    = "addThread";
 		para['title']   = encodeURIComponent(title.replace(/(\r\n|\n|\r)/gm,""));
-		para['creator'] = encodeURIComponent(creator);
 		para['text']    = encodeURIComponent(text.replace(/(\r\n|\n|\r)/gm,"<br>"));
 		xhr.open("POST", url, true);
 		xhr.onreadystatechange = function(){
@@ -67,14 +68,14 @@ class PyForum {
 		xhr.send(JSON.stringify(para));
 	}
 
-	addPost(author,text){
+	addPost(text){
 		var xhr = new XMLHttpRequest();
 		var url = 'http://nile16.nu:1201/';
 		var para  = {};
 		para['forumId'] = this.forumId;
+		para['idtoken'] = id_token;
 		para['task']    = "addPost";
 		para['_id']     = this.lastThreadId;
-		para['author']  = encodeURIComponent(author);
 		para['text']    = encodeURIComponent(text.replace(/(\r\n|\n|\r)/gm,"<br>"));
 		xhr.open("POST", url, true);
 		xhr.onreadystatechange = function(){
