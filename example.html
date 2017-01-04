@@ -7,9 +7,7 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0,  minimum-scale=1.0"> 
 	<meta charset='utf-8' />
 	<link rel="stylesheet" href="example.css" />
-	<script src="pyforum.js"></script>
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
-	<meta name="google-signin-client_id" content="397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com">
+	<script src="http://nile16.nu/forum/pyforum.js"></script>
 </head>
   
 <body>
@@ -17,14 +15,11 @@
 		<div id="dimmer"></div> <!-- Semi transparent layer used to dim the page and direct attention to the pop-up forms -->
 		<div id="header">
 			<forumtitle>Kentas forum för alldagliga ting</forumtitle>
-			<button id="signInButton" onclick="signIn();">Sign In</button>
-			<button id="signOutButton" onclick="signOut();">Sign out</button>
+			<button id="signInButton" onclick="myForum.signIn();">Sign In</button>
+			<button id="signOutButton" onclick="myForum.signOut();">Sign out</button>
 		</div>
 		<div id="output"></div> <!-- Area for thread or post list -->
 		<div id="createButtonSpace"></div> <!-- Area for buttons -->
-		<div id="signInBox"> <!-- Area for google sign in button -->
-			<div class="g-signin2" data-onsuccess="onSignIn"></div>
-		</div>
 		<div id="newPostBox">   <!-- Pop-up form for making a new post -->
 			<div class="cancelButton" onclick="closePopUps()">&#x2716</div>
 			<textarea           id="postText"     placeholder="Skriv ditt inlägg här" ></textarea>
@@ -41,56 +36,36 @@
 
 <script>
 
-	// Variable for user's token, used to indentiy the user server side
-	id_token=0;
-
 	// Micro jquery!!!
 	function $(ele){
 		return document.getElementById(ele);
 	}
 
 	// Create a forum object
-	myForum = new PyForum('wu16');
+	myForum = new PyForum( {	forumId  : "wu16",					// Your forum's unique id
+								facebook : "674944756017633",		// Your website's FaceBook App ID
+								google   : "397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com"
+							});
 	
-	function signIn(){
-		// "Dims" the whole page by making the dimmer div visible
-		$('dimmer').style.display='block';
-		$('signInBox').style.display='flex';
+	// Set a function to call when the user logs in in
+	myForum.setSignedInFunction(signedIn); 
+	
+	// Set a function to call when the user logs out
+	myForum.setSignedOutFunction(signedOut); 
+
+
+	function signedIn(){
+		$('signInButton').style.display='none';
+		$('signOutButton').style.display='block';
+		$('createButtonSpace').style.display='block';
 	}
 	
-	function onSignIn(googleUser) {
-		id_token = googleUser.getAuthResponse().id_token;
-	//	var xhr = new XMLHttpRequest();
-	//	var para  = {};
-	//	para['task']    = "logIn";
-	//	para['idtoken'] = id_token;
-	//	xhr.open('POST', 'http://nile16.nu:1201/', true); // should be https but raspberry no support yet
-	//	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	//	xhr.onload = function() {
-	//		console.log('Signed in as: ' + xhr.responseText);
-	//	};
-	//	xhr.send(JSON.stringify(para));
-	//	console.log("token sent: ",para);
-		document.getElementById('signInButton').style.display='none';
-		document.getElementById('signOutButton').style.display='block';
-		document.getElementById('signInBox').style.display='none';
-		document.getElementById('dimmer').style.display='none';
-		document.getElementById('createButtonSpace').style.display='block';
-	}
-	
-	
-	function signOut() {
-		var auth2 = gapi.auth2.getAuthInstance();
-		auth2.signOut().then(function () {
-		console.log('User signed out.');
-		});
-		document.getElementById('signInButton').style.display='block';
-		document.getElementById('signOutButton').style.display='none';
-		document.getElementById('createButtonSpace').style.display='none';
+	function signedOut() {
+		$('signInButton').style.display='block';
+		$('signOutButton').style.display='none';
+		$('createButtonSpace').style.display='none';
 	}
 
-	
-	
 	// Writes a list of threads to the output div
 	function writeThreadList(threadlist){
 		// Add a button for creation of a new thread
@@ -114,7 +89,7 @@
 		// Replace any text in the output div with a button used to return to the thread list view
 		$('output').innerHTML="<div class='cancelButton' onclick='myForum.getThreadList(writeThreadList)'>&#x2716</div>";
 		// Add thread title, text and author name to the output div
-		$('output').innerHTML+="<b><headline>"+thread['title']+"</headline></b><p>"+thread['text']+"</p>Startad av: <i>"+thread['creator']+"</i><br><hr>";
+		$('output').innerHTML+="<b><headline>"+thread['title']+"</headline></b><p>"+thread['text']+"</p><i>"+thread['creator']+"</i><br><hr>";
 		// Loop through the list of posts write the posts one by one to the output div
 		for (i=0;i<thread['posts'].length;i++) {
 			$('output').innerHTML+="<p>"+thread['posts'][i]['text']+"</p><i>"+thread['posts'][i]['author']+"</i><hr>";

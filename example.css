@@ -13,13 +13,29 @@
 	#dimmer {
 		position: absolute;
 		z-index:3;
-		width:100%;
-		height:100%; 
+		top:0px; 
+		bottom:0px; 
+		right:0px; 
+		left:0px; 
 		opacity:0.5;
 		background-color:#000000;
 		display:none;
 }		
 	
+	#signInDiv {
+		position: absolute;
+		justify-content:center;
+		align-items:center;
+		flex-direction:column;
+		z-index:9999;
+		top:0px; 
+		bottom:0px; 
+		right:0px; 
+		left:0px; 
+		background-color: rgba(0, 0, 0, 0.7);
+		display:none;
+	}		
+
 	#header {
 		position: absolute;
 		z-index:1;
@@ -60,22 +76,6 @@
 	}
 
 	#signOutButton {
-		display:none;
-	}
-	
-	#signInBox {
-		position: absolute;
-		justify-content:center;
-		align-items:center;
-		z-index:7;
-		top:200px; 
-		width:150px;
-		height:100px;
-		left: 50%;
-		margin-right: -50%;
-		transform: translate(-50%, 0%);
-		background-color:#c0c0ff;
-		border: none;
 		display:none;
 	}
 

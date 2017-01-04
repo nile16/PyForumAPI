@@ -1,12 +1,16 @@
+#sudo pip install facebook-sdk
+
 
 from flask import Flask, request, session
 from flask_cors import CORS, cross_origin
 from pymongo import MongoClient
-from bson.objectid import ObjectId
+from bson.objectid import ObjectId          # Used to create an id-object for mongo database
 import json
 import time
-from oauth2client import client, crypt
+#from oauth2client import client, crypt      # Used to read googles tokens
+import facebook
 import os
+import requests
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -38,9 +42,15 @@ def tasks():
     elif (received_data['task']=="addThread"):
         token=received_data['idtoken']
         try:
-            idinfo = client.verify_id_token(token, '397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com')
-#           Save the authhor and forumId in separate variables
-            creator=idinfo['name']
+            if (received_data['account']=="facebook"):
+                graph = facebook.GraphAPI(access_token=token)
+                creator=graph.get_object(id='me')['name']
+                creatorId=graph.get_object(id='me')['id']
+            if (received_data['account']=="google"):
+                r=requests.get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+token)
+                creator=r.json()['name']
+                creatorId=r.json()['sub']
+#           Save the forumId in separate variables
             forumId=received_data['forumId']
 #           Remove the 'task' and forumId from the received dict
             del received_data['idtoken']
@@ -56,7 +66,7 @@ def tasks():
 #           Insert the received dict into the mongo collection specified by 'forumId'
             db[forumId].insert(received_data)
             return ("OK")
-        except crypt.AppIdentityError:
+        except:
             return ("Error")
 
     elif (received_data['task']=="getThread"):
@@ -68,10 +78,20 @@ def tasks():
     elif (received_data['task']=="addPost"):
         token=received_data['idtoken']
         try:
-            idinfo = client.verify_id_token(token, '397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com')
-            db[received_data['forumId']].update({'_id': ObjectId(received_data['_id'])},{'$push': {'posts': { 'time':int(time.time()),'author':idinfo['name'],'text':received_data['text']}}})
+            if (received_data['account']=="facebook"):
+                graph = facebook.GraphAPI(access_token=token)
+                creator=graph.get_object(id='me')['name']
+                creatorId=graph.get_object(id='me')['id']
+            if (received_data['account']=="google"):
+                r=requests.get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+token)
+                creator=r.json()['name']
+                creatorId=r.json()['sub']
+#                idinfo = client.verify_id_token(token, '397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com')
+#                creator=idinfo['name']
+#                creatorId=idinfo['sub']
+            db[received_data['forumId']].update({'_id': ObjectId(received_data['_id'])},{'$push': {'posts': { 'time':int(time.time()),'author':creator,'text':received_data['text']}}})
             return("OK")
-        except crypt.AppIdentityError:
+        except:
             return ("Error")
 
     else:
