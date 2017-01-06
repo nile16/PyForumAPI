@@ -1,6 +1,6 @@
 
 
-// Variable for user's token, used to indentify the user server side
+// Globals
 id_token=0;
 account="";
 signedInFunction=0;
@@ -12,14 +12,16 @@ function onSignInGoogle(googleUser) {
 	id_token = googleUser.getAuthResponse().id_token;
 	account="google";
 	document.getElementById('signInDiv').style.display='none';
-	if (signedInFunction) signedInFunction();
+	if (signedInFunction) signedInFunction(googleUser.getBasicProfile().getName());
 }
 
 function onSignInFaceBook(){
 	id_token = FB.getAuthResponse().accessToken;
 	account="facebook";
 	document.getElementById('signInDiv').style.display='none';
-	if (signedInFunction) signedInFunction();
+	if (signedInFunction) FB.api('/me', function(response) {
+		signedInFunction(response.name)
+     });
 }
 
 
@@ -43,6 +45,7 @@ class PyForum {
 		// Add login buttons according to facebook's and google's spec
 		var siDiv = document.createElement("div");       
 		siDiv.id="signInDiv";
+		siDiv.style="position:absolute;justify-content:center;align-items:center;flex-direction:column;z-index:9999;top:0px;bottom:0px;right:0px;left:0px;background-color:rgba(0,0,0,0.7);display:none;";
 		document.body.insertBefore(siDiv, document.body.firstChild);
 		document.getElementById('signInDiv').innerHTML = "<div class='g-signin2' style='margin:20px' data-onsuccess='onSignInGoogle' ></div><div class='fb-login-button' style='margin:20px' onlogin='onSignInFaceBook' data-max-rows='1' data-size='xlarge' data-show-faces='false' data-auto-logout-link='false'></div>";
 		
@@ -103,7 +106,6 @@ class PyForum {
 				var title=[];
 				for (var i=0;i<threadList.length;i++) {
 					threadList[i]['title']=(decodeURIComponent(threadList[i]['title']));
-					//console.log(threadList[i]);
 					}
 				callback(threadList);
 				}

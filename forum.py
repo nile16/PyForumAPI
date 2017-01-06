@@ -7,7 +7,6 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId          # Used to create an id-object for mongo database
 import json
 import time
-#from oauth2client import client, crypt      # Used to read googles tokens
 import facebook
 import os
 import requests
@@ -86,9 +85,6 @@ def tasks():
                 r=requests.get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+token)
                 creator=r.json()['name']
                 creatorId=r.json()['sub']
-#                idinfo = client.verify_id_token(token, '397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com')
-#                creator=idinfo['name']
-#                creatorId=idinfo['sub']
             db[received_data['forumId']].update({'_id': ObjectId(received_data['_id'])},{'$push': {'posts': { 'time':int(time.time()),'author':creator,'text':received_data['text']}}})
             return("OK")
         except:

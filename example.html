@@ -3,10 +3,10 @@
 <html lang = "en">
    
 <head>
-	<title>Example usage of PyForumAPI</title>
+	<title>PyForumAPI Exempel</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0,  minimum-scale=1.0"> 
 	<meta charset='utf-8' />
-	<link rel="stylesheet" href="example.css" />
+	<link rel="stylesheet" href="forum.css" />
 	<script src="http://nile16.nu/forum/pyforum.js"></script>
 </head>
   
@@ -14,9 +14,9 @@
 	<div id="wrapper">
 		<div id="dimmer"></div> <!-- Semi transparent layer used to dim the page and direct attention to the pop-up forms -->
 		<div id="header">
-			<forumtitle>Kentas forum för alldagliga ting</forumtitle>
-			<button id="signInButton" onclick="myForum.signIn();">Sign In</button>
-			<button id="signOutButton" onclick="myForum.signOut();">Sign out</button>
+			<forumtitle>PyForumAPI Exempel</forumtitle>
+			<button id="signInButton"  onclick="myForum.signIn(); ">Logga In</button>
+			<button id="signOutButton" onclick="myForum.signOut();">Logga Ut</button>
 		</div>
 		<div id="output"></div> <!-- Area for thread or post list -->
 		<div id="createButtonSpace"></div> <!-- Area for buttons -->
@@ -42,29 +42,26 @@
 	}
 
 	// Create a forum object
-	myForum = new PyForum( {	forumId  : "wu16",					// Your forum's unique id
-								facebook : "674944756017633",		// Your website's FaceBook App ID
-								google   : "397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com"
+	myForum = new PyForum({		forumId  : "wu16",                                                                    // Your pyforum's id
+								facebook : "674944756017633",                                                         // Your website's FaceBook App ID
+								google   : "397944035490-1ojdlm58ess32m3iigdck8gugopmvng1.apps.googleusercontent.com" // Your website's Google Sign-in ID
 							});
 	
-	// Set a function to call when the user logs in in
-	myForum.setSignedInFunction(signedIn); 
+	// Specify a function to be called when the user have logged in, the username is passed as parameter
+	myForum.setSignedInFunction(function(userName){
+		$('signInButton').style.display='none';        // Hide log in button
+		$('signOutButton').style.display='block';      // Show log out button
+		$('createButtonSpace').style.display='block';  // Show buttons for creation of threads and posts
+		}
+	); 
 	
-	// Set a function to call when the user logs out
-	myForum.setSignedOutFunction(signedOut); 
-
-
-	function signedIn(){
-		$('signInButton').style.display='none';
-		$('signOutButton').style.display='block';
-		$('createButtonSpace').style.display='block';
-	}
-	
-	function signedOut() {
-		$('signInButton').style.display='block';
-		$('signOutButton').style.display='none';
-		$('createButtonSpace').style.display='none';
-	}
+	// Specify a function to be called when the user have logged out
+	myForum.setSignedOutFunction(function(){
+		$('signInButton').style.display='block';       // Show log in button
+		$('signOutButton').style.display='none';       // Hide log out button
+		$('createButtonSpace').style.display='none';   // Hide buttons for creation of threads and posts
+		}
+	); 
 
 	// Writes a list of threads to the output div
 	function writeThreadList(threadlist){
