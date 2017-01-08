@@ -51,7 +51,7 @@ def tasks():
                 creatorId=r.json()['sub']
 #           Save the forumId in separate variables
             forumId=received_data['forumId']
-#           Remove the 'task' and forumId from the received dict
+#           Remove the token, task, forumId and account from the received dict
             del received_data['idtoken']
             del received_data['task']
             del received_data['forumId']
