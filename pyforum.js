@@ -144,11 +144,7 @@ class PyForum {
 		xhr.open("POST", url, true);
 		xhr.onreadystatechange = function(){
 			if(xhr.readyState == 4 && xhr.status == 200) {
-				var thread=eval("("+decodeURIComponent(xhr.response)+")"); // Eval requires wrapping in () Bug?
-				//thread=JSON.parse(decodeURIComponent(xhr.response)); 
-				//console.log(thread);
-				//for (i=0;i<thread['posts'].length;i++) {
-				//	}
+				var thread=JSON.parse(decodeURIComponent(xhr.responseText)); 
 				callback(thread);
 				}
 			}

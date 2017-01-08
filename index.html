@@ -9,50 +9,91 @@
 </head>
 
 <style>
-	#wrapper {
-		position: absolute;
-		z-index:0;
-		top:0px; 
-		bottom:0px; 
-		right:0px; 
-		left:0px; 
-		background-color:#f0f0f0;
-		overflow:hidden; 
+	body {
+		background-color:#c0c0ff;
 	}
 
 	#main {
-		position: absolute;
-		top:50px; 
-		width:700px;
-		left: 50%;
-		margin-right: -50%;
-		transform: translate(-50%, 0%);
-		background-color:#c0c0ff;
-		padding:10px;
+		width:90%;
+		max-width:800px;
+		font-size:20px;
+		margin:20px auto;
+		padding:20px 20px 20px 20px;
+		border-radius:10px;
+		background-color:#f0f0f0;
 	}
 	
 	h1 {
 		text-align:center;
+		font-size:40px;
+		color:#ffffff;
 	}
 		
 </style>
 
 
 <body>
-	<div id="wrapper">
-		<div id="main"><h1>PyForumAPI</h1>
-		Den kortaste vägen mot ditt eget forum för din vebbsida!
-		Vill du ha ett forum på din webbsida men du vill inte skriva allt från grunden eller betala hutlösa priser för färdiga lösningar?
-		PyForumAPI är vad du söker. Ett enkelt API som tar hand om inlogging med Google och Facebook samt lagrar dina trådar och inlägg.
-		Allt du behöver göra är att kostnadsfritt hämta ett AppId från Facebook och ett SignIn Id från Google, klistra in dem i vårat färdiga exempel och du är klar.
-		Du kan använda vårat exempel rakt av, modifiera det som du önskar eller skriva nytt från början.
+	<h1>PyForum Javascript API</h1>
+	<div id="main">
+		<b>The easy way to create your own web forum!</b><br><br>
+		Do you want a forum for your website but do not want to write everything from scratch or pay crazy fees for a complete solution?<br><br>
+		PyForumAPI is what you are looking for. A simple API which takes care of login with Google and Facebook and stores your threads and posts.
+		You do not need an expensive webhost for your forum, the simplest service is sufficent.<br><br>
+		All you need is to get a free App Id from Facebook and a free SignIn Id from Google, paste them into our example, upload the files to your webserver and your are done.
+		You can use our example as is, modify it as you please or write a new one.
 		<br><br>
-		Ta en titt på <a href="http://nile16.nu/forum/forum.html">vårat exempel</a>.	
+		Have a look at <a href="http://nile16.nu/forum/example.html">our example</a> in action.	
 		<br><br>
-		<a href="https://developers.facebook.com/apps/">Skaffa Facebook App Id</a>. Klicka på "Add a New App".	
+		<a href="https://developers.facebook.com/apps/">Get Facebook App Id</a>. Click on "Add a New App".	
 		<br><br>
-		<a href="https://console.developers.google.com/projectselector/apis/library">Skaffa Google SignIn</a>. Klicka på "Create a Project".	
-		</div>
+		<a href="https://console.developers.google.com/projectselector/apis/library">Get Google SignIn</a>. Click on "Create a Project".
+		<br><br><br>
+		<b>Technical description</b><br><br>
+		The API consists of a class named PyForum. The class has the following methods:<br><br>
+		<i>signIn()</i><br>
+		Lets the user login by displaying the login buttons for Facebook and Google.<br><br>
+		<i>setSignedInFunction(function)</i><br>
+		Sets a function to be called when the user has logged in. The function you specify will be called as a result of the signIn() method and 
+		also when the page is loaded and the user was already logged in from a previous session. 
+		The function will be called with the username as argument.<br><br> 
+		<i>signOut()</i><br>
+		Logs the user out.<br><br>
+		<i>setSignedOutFunction()</i><br>
+		Sets a function to be called when the user has logged out.<br><br> 
+		<i>getThreadList(callback)</i><br>
+		Orders a list of threads.<br>
+		This method takes a callback function as single argument. When the list of threads is ready the callback function is called with the list of threads as argument.
+		The list is in the form of an array of associative arrays where each associative array represents one thread in the forum. 
+		The list is sorted so the thread that was last updated is first. The associative arrays contains the following keys:<br><br>
+		_id         - A unique id number for the thread<br>
+		title       - Title of the thread<br>
+		creator     - Username of the thread's creator<br>
+		time        - Time the thread was created, unix timestamp <br>
+		replys      - Number of replys to the thread<br>
+		viewed      - Number of time the thread has been viewed<br>
+		last        - Username of the last poster to the thread<br>
+		last_time   - Time for the last post, unix time stamp<br><br>
+		<i>getThread(id,callback)</i><br>
+		Orders a thread with posts.<br>
+		This method takes a thread id and a callback function as arguments. When the thread is ready the callback function is called with the thread as argument.
+		The thread is in the form of an associative array. The associative arrays contains the following keys:<br><br>
+		_id         - A unique id number for the thread <br>
+		title       - Title of the thread <br>
+		text        - Text submitted by the thread's creator <br>
+		creator     - Username of the thread's creator <br>
+		time        - Time the thread was created, unix timestamp  <br>
+		posts       - An array containing the posts<br><br>
+		The array containg the posts is an array of associative arrays where each associative array represents one post in the thread. 
+		The associative arrays contains the following keys:<br><br>
+		author      - Username of the post's creator<br>
+		text        - Text submitted by the post's creator <br>
+		time        - Time the post was created, unix timestamp <br><br>
+		<i>addThread(title,text)</i><br>
+		Creates a new thread.<br>
+		This method takes a thread title and an opening post as arguments.<br><br>
+		<i>addPost(text)</i><br>
+		Creates a new post.<br>
+		This method takes a post as arguments. The post will be added to the thread that was read last with getThread.<br>
 	</div>
 </body>
 

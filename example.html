@@ -6,7 +6,7 @@
 	<title>PyForumAPI Exempel</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0,  minimum-scale=1.0"> 
 	<meta charset='utf-8' />
-	<link rel="stylesheet" href="forum.css" />
+	<link rel="stylesheet" href="example.css" />
 	<script src="http://nile16.nu/forum/pyforum.js"></script>
 </head>
   
@@ -14,9 +14,10 @@
 	<div id="wrapper">
 		<div id="dimmer"></div> <!-- Semi transparent layer used to dim the page and direct attention to the pop-up forms -->
 		<div id="header">
-			<forumtitle>PyForumAPI Exempel</forumtitle>
+			<div id="forumtitle">PyForumAPI Exempel</div>
 			<button id="signInButton"  onclick="myForum.signIn(); ">Logga In</button>
 			<button id="signOutButton" onclick="myForum.signOut();">Logga Ut</button>
+			<div    id="userNameSpace"></div> <!-- Space for the username of logged in user -->
 		</div>
 		<div id="output"></div> <!-- Area for thread or post list -->
 		<div id="createButtonSpace"></div> <!-- Area for buttons -->
@@ -52,6 +53,7 @@
 		$('signInButton').style.display='none';        // Hide log in button
 		$('signOutButton').style.display='block';      // Show log out button
 		$('createButtonSpace').style.display='block';  // Show buttons for creation of threads and posts
+		$('userNameSpace').innerHTML=userName;         // Show username next to logout button
 		}
 	); 
 	
@@ -60,6 +62,7 @@
 		$('signInButton').style.display='block';       // Show log in button
 		$('signOutButton').style.display='none';       // Hide log out button
 		$('createButtonSpace').style.display='none';   // Hide buttons for creation of threads and posts
+		$('userNameSpace').innerHTML="";               // Remove username next to logout button
 		}
 	); 
 

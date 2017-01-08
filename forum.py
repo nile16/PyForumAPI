@@ -55,6 +55,7 @@ def tasks():
             del received_data['idtoken']
             del received_data['task']
             del received_data['forumId']
+            del received_data['account']
 #           Prime the recevied dict with an empty 'posts', future posts added to the thread will be saved here
             received_data['posts']=[]
             received_data['creator']=creator
